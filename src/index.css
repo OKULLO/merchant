@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('http://fonts.cdnfonts.com/css/montserrat');
+
+body {
+  margin: 0;
+   font-family: 'Montserrat', sans-serif; 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} 
+
+.will-change {
+  will-change: transform;
+}
+
+.cursor::after {
+  display: block;
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background-color: #fff;
+  animation: cursor .6s linear infinite alternate;
+  will-change: opacity;
+}
+
+@keyframes cursor {
+  0%, 40% {
+    opacity: 1;
+  }
+
+  60%, 100% {
+    opacity: 0;
+  }
+}
+.left-border {
+  border-top-left-radius: 50%;
+}
+.bottom-right-border {
+  border-bottom-right-radius: 50%;
+}
+.card-height{
+  height: 10px;
+}
+
+.elementor-shape .elementor-shape-fill {
+  fill: #fff;
+  -webkit-transform-origin: center;
+  -ms-transform-origin: center;
+  transform-origin: center;
+  -webkit-transform: rotateY(0deg);
+  transform: rotateY(0deg);
+}
+
+.elementor-shape-bottom {
+  bottom: -1px;
+}
+
+
+.elementor-21 .elementor-element.elementor-element-317bd89 > .elementor-background-overlay {
+    opacity: 1;
+    transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
+
+.sermon-wrapper .sermon-inner > *:nth-child(2) {
+    margin-bottom: 20px;
+}
+
+
+.shortcode-rand-1.sermon-wrapper .sermon-inner > *:nth-child(2) {
+    margin-bottom: 20px;
+}
+.sermon-wrapper.sermon-modern .sermon-inner > *:nth-child(2) {
+    margin-top: -25px;
+    text-align: center;
+}
+
+sermon-play-list li a, .sermon-tool-list li a {
+    width: 54px;
+    height: 54px;
+    font-size: 18px;
+    line-height: 57px;
+}
+
