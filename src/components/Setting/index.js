@@ -1,7 +1,7 @@
 import React from 'react'
-import Sidebar from './Sidebar'
+// import Sidebar from './Sidebar'
 import Account from './Account'
-import { VscClose } from 'react-icons/vsc'
+
 
 export default function Setting({ onClose }) {
   return (

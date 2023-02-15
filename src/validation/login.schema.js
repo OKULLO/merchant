@@ -1,11 +1,10 @@
 import * as yup from 'yup'
 
 export default yup.object().shape({
-  email: yup
+  username: yup
     .string()
-    .email('Not a well formed email address')
     .lowercase()
-    .required('Email is required')
+    .required('Username is required')
     .defined(),
   password: yup
     .string()

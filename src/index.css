@@ -4,6 +4,11 @@
 
 @import url('http://fonts.cdnfonts.com/css/montserrat');
 
+:root {
+  --scroll-bar-color: #c5c5c5;
+  --scroll-bar-bg-color: #f6f6f6;
+}
+
 body {
   margin: 0;
    font-family: 'Montserrat', sans-serif; 
@@ -45,42 +50,32 @@ body {
   height: 10px;
 }
 
-.elementor-shape .elementor-shape-fill {
-  fill: #fff;
-  -webkit-transform-origin: center;
-  -ms-transform-origin: center;
-  transform-origin: center;
-  -webkit-transform: rotateY(0deg);
-  transform: rotateY(0deg);
-}
-
-.elementor-shape-bottom {
-  bottom: -1px;
+.group:hover .group-hover\:flex {
+	display: flex !important;
 }
 
 
-.elementor-21 .elementor-element.elementor-element-317bd89 > .elementor-background-overlay {
-    opacity: 1;
-    transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+::-webkit-scrollbar-corner { background: rgba(0,0,0,0.5); }
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-bg-color);
 }
 
-.sermon-wrapper .sermon-inner > *:nth-child(2) {
-    margin-bottom: 20px;
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-
-.shortcode-rand-1.sermon-wrapper .sermon-inner > *:nth-child(2) {
-    margin-bottom: 20px;
-}
-.sermon-wrapper.sermon-modern .sermon-inner > *:nth-child(2) {
-    margin-top: -25px;
-    text-align: center;
+*::-webkit-scrollbar-track {
+    background: var(--scroll-bar-bg-color);
 }
 
-sermon-play-list li a, .sermon-tool-list li a {
-    width: 54px;
-    height: 54px;
-    font-size: 18px;
-    line-height: 57px;
+*::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-bar-color);
+    border-radius: 20px;
+    border: 3px solid var(--scroll-bar-bg-color);
 }
+
 

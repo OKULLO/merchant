@@ -1,92 +1,22 @@
-import {useState} from 'react';
-import { Link } from 'react-router-dom';
-import { Switch } from '@headlessui/react'
-import {
-  BellIcon,
-  ClockIcon,
-  CogIcon,
-  CreditCardIcon,
-  DocumentReportIcon,
-  HomeIcon,
-  MenuAlt1Icon,
-  QuestionMarkCircleIcon,
-  ScaleIcon,
-  ShieldCheckIcon,
-  UserGroupIcon,
-  XIcon,
-} from '@heroicons/react/outline'
-import {
-  CashIcon,
-  CheckCircleIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  OfficeBuildingIcon,
-  SearchIcon,
-  PlusIcon
-} from '@heroicons/react/solid'
+import react, { useState } from 'react'
+import DineIn from './DineKitchenHours'
 
-import Blog from './Blog/blog'
-import Sermon from './Sermons/sermons'
-import Events from './Events/events'
-import Podcasts from './Podcasts/podcasts'
-const cards = [
-  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
-  // More items...
+import { PlusIcon} from '@heroicons/react/outline'
+
+const tabs = [
+  { name: 'Dine In', href: '#', id: 1 },
+  { name: 'Delivery', href: '#', id: 2 },
+  { name: 'Pickup', href: '#', id: 3 }
 ]
-const transactions = [
-  {
-    id: 1,
-    name: 'Payment to Molly Sanders',
-    href: '#',
-    amount: '$20,000',
-    currency: 'USD',
-    status: 'success',
-    date: 'July 11, 2020',
-    datetime: '2020-07-11',
-  },
-  // More transactions...
-]
-const statusStyles = {
-  success: 'bg-green-100 text-green-800',
-  processing: 'bg-yellow-100 text-yellow-800',
-  failed: 'bg-gray-100 text-gray-800',
-}
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-const people = [
-  {
-    name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    department: 'Optimization',
-    email: 'lindsay.walton@example.com',
-    role: 'Member',
-    image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  // More people...
-]
+export default function KitchenHours(){
 
-
-
-
-const tabs = [
-  { name: 'Sermons', href: '#', id: 1 },
-  { name: 'Blog', href: '#', id: 2 },
-  { name: 'Podcasts', href: '#', id: 3 },
-  { name: 'Events', href: '#', id: 4 },
-]
-
-
-
-export default function Dashboard(){
-   const [ activeTab, setActiveTab ] = useState(1);
+  const [ activeTab, setActiveTab ] = useState(1);
   const [ currentTab, setCurrentTab ] = useState(tabs[0]);
-  const [sermons,setSermons] = useState([])
-   const [enabled, setEnabled] = useState(false)
-
 
   function handleTabClick(currentTab){
       setActiveTab(currentTab);
@@ -94,12 +24,14 @@ export default function Dashboard(){
       setCurrentTab(currentTabContent[0]);
   };
 
-	return (
-		   <main className="flex-1 pb-8">
-            {/* Page header */}
-            <div className="bg-white shadow">
+  return (
+    <section class="max-w-4xl p-6 mx-auto bg-white dark:bg-gray-800 mt-8">
+    <h1 class="text-md font-bold text-slate-800 capitalize dark:text-white">Kitchen Hours</h1>
+    <p className="text-sm text-gray-500">Customers cannot place orders beyond your set kitchen hours </p>
+
+    <div className="bg-white shadow">
               <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
-                <div className="py-6 md:flex md:items-center md:justify-between lg:border-t lg:border-gray-200">
+                <div className="py-6 md:flex md:items-center md:justify-between ">
                   <div className="flex-1 min-w-0">
                     {/* Profile */}
 
@@ -119,14 +51,15 @@ export default function Dashboard(){
                           <option onChange={() => handleTabClick(tab.id)} key={tab.name}>{tab.name}</option>
                         ))}
                       </select>
+                      
                     </div>
                     <div className="hidden sm:block">
                       <nav className="flex space-x-4" aria-label="Tabs">
                         {tabs.map((tab) => (
-                          <a
+                          <button
                             onClick={() => handleTabClick(tab.id)}
                             key={tab.name}
-                            href={tab.href}
+                          
                             className={classNames(
                               activeTab===tab.id? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:text-gray-700',
                               'px-3 py-2 font-medium text-sm rounded-md'
@@ -134,8 +67,16 @@ export default function Dashboard(){
                             aria-current={tab.current ? 'page' : undefined}
                           >
                             {tab.name}
-                          </a>
+                          </button>
                         ))}
+                      <span className='flex-1  justify-end'>
+                      <button type="button"  className="flex items-center px-3 py-0.5 border border-gray-200 shadow-sm text-sm font-medium rounded-xl text-slate-800 hover:text-white bg-gray-50  hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <PlusIcon className='w-3 h-3 mr-1'/>
+                                                Add kitchen hours
+                          </button>
+
+                      </span>
+            
                       </nav>
                     </div>
                   </div>
@@ -145,12 +86,12 @@ export default function Dashboard(){
               </div>
             </div>
             </div>
-            </div>
-            {/* Description list */}
-                <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                {currentTab.id===1 && (<Sermon />)}
 
-                {currentTab.id===2 && (
+              {/* Description list */}
+              <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 ">
+                {currentTab.id===1 && (<DineIn />)}
+
+                {/* {currentTab.id===2 && (
                    <Blog/>
                   )}
 
@@ -159,11 +100,15 @@ export default function Dashboard(){
                   )}
                 {currentTab.id===4 && (
                    <Events/>
-                  )}
+                  )}  */}
+                  </div>
+            </div>
+            
                 
                
                   
-                </div>
-          </main>
-		)
+               
+    
+</section>
+  )
 }

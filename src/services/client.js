@@ -5,12 +5,12 @@ import {LOGIN_PAGE } from '../constants/history.constants'
 
 
 
-axios.defaults.withCredentials = false
+axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] ='application/json';
 
 const Client = axios.create({
 	
-   baseURL: config.Config.BASE_API_URL,
+   baseURL: config.MerchantConfig.BASE_API_URL,
    headers:  { 'Content-Type': 'application/json'}
   });
 
@@ -19,7 +19,8 @@ const Client = axios.create({
    Client.interceptors.request.use((config)=> {
     if (localStorage.user) {
       const userStorage = JSON.parse(localStorage.getItem('user'))
-      config.headers['api-token'] = `${userStorage?.jwt_token}`
+    
+      config.headers['Authorization'] = `Bearer ${userStorage?.access_token}`
     }
     return config
   })
@@ -27,8 +28,7 @@ const Client = axios.create({
   Client.interceptors.response.use(
     (response) => response,
     (err) => {
-  
-      // toast.warn(err.response.data.message)
+     console.log(err)
       const { status } = err.response.status
       
   

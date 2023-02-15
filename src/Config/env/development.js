@@ -1,6 +1,6 @@
 const devConfig ={}
 
-devConfig.Config = { BASE_API_URL: "http://192.168.1.108:4000" }
+devConfig.MerchantConfig = { BASE_API_URL: "http://localhost:8050" }
 
 
 

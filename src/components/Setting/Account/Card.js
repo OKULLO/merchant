@@ -1,37 +1,54 @@
-import React, { useState } from 'react'
-import { Dialog, Switch, Transition } from '@headlessui/react'
+import React, { useState,useEffect,useRef } from 'react'
+import { Switch } from '@headlessui/react'
 import Modal from '../../shared/Modal'
-import UpdateUserName from './UpdateUserName'
-import UpdateEmail from './UpdateEmail'
-import {updateUserProfile } from '../../../services/account'
-import UpdatePhone from './UpdatePhone'
-import UpdateName from './UpdateName'
+import KitchenHours from './KitchenHours';
+import { Field, Formik, Form, useFormikContext } from 'formik'
+
+import {updateMerchantProfile } from '../../../services/merchant'
+
+
 import toast from 'react-hot-toast';
 
 
 
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+function SetFormikValues({merchantData}){
+
+  const { setFieldValue } = useFormikContext();
+
+  useEffect(() => {
+                       
+                          
+    const fields = ['merchant_name', 'merchant_type','about','business_email','business_phone','city','country','street_address'];
+
+    fields.forEach(field => setFieldValue(field, merchantData?.merchant[field], false));
+
+
+}, []);
+
 }
 
-export default function Card({ user }) {
+export default function Card({ merchantData, merchantId }) {
+  
   const [showUserNameUpdate, toggleUserNameUpdateModal] = useState(false)
   const [showEmailUpdate, toggleEmailUpdateModal] = useState(false)
   const [showPhoneUpdate, togglePhoneUpdateModal] = useState(false)
+  const [merchant , setMerchant] = useState()
 
-  const [automaticTimezoneEnabled, setAutomaticTimezoneEnabled] = useState(true)
+  const [isEditting, setEdittingEnabled] = useState(false)
   const [autoUpdateApplicantDataEnabled, setAutoUpdateApplicantDataEnabled] = useState(false)
-   const [escape,setOnEscape] = useState(true)
 
 
-  // const [showUserNameUpdate, toggleUserNameUpdateModal] = useState(false)
-  // const [showEmailUpdate, toggleEmailUpdateModal] = useState(false)
+
   const [showPasswordUpdate, togglePasswordUpdateModal] = useState(false)
   const [showlNameUpdate, toggleLNameUpdateModal] = useState(false)
   const [showfNameUpdate, togglefNameUpdateModal] = useState(false)
 
+ 
 
+ useEffect (()=>{
+   if(merchantData?.merchant !==null || merchantData?.merchant!==undefined) setMerchant(merchantData?.merchant)
+ },[merchantData?.merchant])
 
   function setCloseUserNameModal() {
     toggleUserNameUpdateModal(!showUserNameUpdate)
@@ -66,37 +83,35 @@ export default function Card({ user }) {
 
   function setClosePhoneModal() {
     togglePhoneUpdateModal(!showPhoneUpdate)
+    
+  }
+
+  function toggleEdittingEnabledMode() {
+    setEdittingEnabled(!isEditting)
+    
   }
 
 
 
-  const profile_default = ``
-console.log(user?.details?.avatar_hash)
 
-  async function updateProfileData(initData,isSubmitting,setIssubmitting,showErrors,modal) {
-    setIssubmitting(!isSubmitting)
+  async function updateMerchantProfileData(values,{setErrors}) {
+   
 
     try {
 
-      const { data } = await updateUserProfile(user?.user_data?.public_id,initData)
+      const { data } = await updateMerchantProfile(merchantId,values)
 
       if (data.success) {
 
-        setIssubmitting(isSubmitting)
-        toast.success(`${modal} `+data.message)
+        toast.success(data.message)
+        setMerchant(data?.merchant)
+        toggleEdittingEnabledMode()
 
-        modal==='phone'?setClosePhoneModal():setCloseUserNameModal()
-        
-      }else {
-        setIssubmitting(isSubmitting)
-        console.log(data.message.error)
-         // setMessage(data.message.reset)
-         showErrors(data.message)
       }
     } catch (error) {
       
       if (error.response.status === 401) {
-        showErrors({ username: error.response.data.message })
+        toast.error('Unauthorized!')
         // console.log('error: ', error.response.data.message)
       } else {
         // setUpdated(!updated)
@@ -148,275 +163,232 @@ console.log(user?.details?.avatar_hash)
 
 
      {/* Description list with inline editing */}
-                      <div className="mt-10 divide-y divide-gray-200">
-                        <div className="space-y-1">
-                          <h3 className="text-lg leading-6 font-medium text-sky-900 dark:text-slate-200 ">Profile</h3>
-                          <p className="max-w-2xl text-sm text-sky-900 dark:text-slate-300">
-                            This information will be displayed publicly so be careful what you share.
-                          </p>
-                        </div>
-                        <div className="mt-6">
-                          <dl className="divide-y divide-gray-200">
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                              <dt className="text-sm font-medium text-sky-900 dark:text-white">First Name</dt>
-                              <dd className="mt-1 flex text-sm text-sky-800 dark:text-slate-300 sm:mt-0 sm:col-span-2">
-                               
-                                  { user?.user_data?.first_name==='None' ? (
-                                  <span className='flex-grow text-xs dark:text-slate-300'>
-                                    Add your first name{' '}
-                                    {/* <span className='text-discord-mainText text-xs'>
-                                      #{user?.user_data?.public_id}
-                                    </span> */}
-                                  </span>):(
-                                    <span className='flex-grow dark:text-slate-300'>
-                                    {user?.user_data?.first_name}{' '}
-                                    
-                                  </span>
-                                  )}
+     <section className=" w-full  mt-4 rounded-md p-2 dark:bg-gray-800 dark:text-gray-50">
+          <div className="container flex flex-col mx-auto space-y-12 ng-untouched ng-pristine ng-valid">
+            
+              <Formik  initialValues={{ merchant_name:'', merchant_type:'',about:'',business_email:'',business_phone:'',city:'',country:'',street_address:''}}
+                   onSubmit={updateMerchantProfileData}>
 
-                                <span className="ml-4 flex-shrink-0">
-                                   { user?.user_data?.first_name ==='None' ? (
-                                      <button
-                                      onClick={setCloseFNameModal}
-                                      className='bg-sky-600 dark:bg-slate-900 text-white p-1 px-4 rounded text-sm text-center rounded-md hover:bg-gray-600'
-                                    >
-                                      Add
-                                    </button>
-                                    ):(
-                                      <button
-                                      onClick={setCloseFNameModal}
-                                      className='bg-sky-600 dark:bg-slate-900 text-white p-1 px-4 rounded text-sm text-center rounded-md hover:bg-gray-600'
-                                    >
-                                      Edit
-                                    </button>
+                   {({ isSubmitting }) => {
+                    
+  
+                     return (
+                      <div>
+                         {isEditting ? (
+                              <Form  className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-md dark:bg-gray-900">
+                                              
+                              <div className="space-y-2 col-span-full lg:col-span-1">
+                                <p className="font-medium text-slate-900">Restaurant details</p>
+                                <p className="text-sm text-slate-500 ">Your restaurant information</p>
+                              </div>
+                              <div className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
+                                <div className="col-span-full sm:col-span-3">
+                                  <label for="firstname" className="text-sm">Restaurant Name</label>
+                                  <Field id="firstname" type="text" placeholder="Merchant name" name='merchant_name'  className="block w-full text-sm px-4 py-1 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                                <div className="col-span-full sm:col-span-3">
+                                  <label for="lastname" className="text-sm">Restaurant type</label>
+                                  <Field id="lastname" type="text" name='merchant_type' placeholder="Last name" className="block w-full px-4 py-1 mt-2 text-gray-700 text-sm bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                                <div className="col-span-full sm:col-span-3">
+                                  <label for="email" className="text-sm">Business Email</label>
+                                  <Field id="email" type="email" name='business_email'  placeholder="Email"  className="block w-full px-4 py-1 mt-2 text-gray-700 text-sm bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                                <div className="col-span-full">
+                                  <label for="address" className="text-sm">Address</label>
+                                  <Field id="address" type="text" name='street_address' placeholder="Physical address" className="block w-full px-4 py-1 mt-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                                <div className="col-span-full">
+                                  <label for="bio" className="text-sm">About</label>
+                                  <Field as='textarea' id="bio" placeholder="" name='about' className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white text-sm  border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"/>
+                                </div>
+                                <div className="col-span-full sm:col-span-2">
+                                  <label for="city" className="text-sm">City</label>
+                                  <Field id="city" type="text" placeholder="city" name='city' value={merchantData?.merchant?.city} className="block w-full text-sm px-4 py-1 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                                <div className="col-span-full sm:col-span-2">
+                                  <label for="state" className="text-sm">Country</label>
+                                  <Field id="state" type="text" placeholder="country" name='country'   className="block w-full px-4 py-1 text-sm mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                                <div className="col-span-full sm:col-span-2">
+                                  <label for="zip" className="text-sm">Business Phone</label>
+                                  <Field id="zip" type="text" placeholder="business phone" name='business_phone'  className="block w-full px-4 py-1 mt-2 text-sm  text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                </div>
+                              </div>
+                              <div class="flex justify-end mt-6 col-span-full">
+                              <button onClick={toggleEdittingEnabledMode} className="px-6 py-1 mx-1 text-sm leading-5 text-white transition-colors duration-200 transform bg-accent border border-gray-100 rounded-md hover:bg-pink-700 focus:outline-none focus:bg-gray-600">
+                                Cancel
+                              </button>
+                              <button type='submit' className="px-6 py-1 leading-5 text-white text-sm transition-colors duration-200 transform bg-indigo-900 rounded-md hover:bg-pink-700 focus:outline-none focus:bg-gray-600">
+                                {isSubmitting ? (
+                                        <svg
+                                        className='animate-spin h-5 w-5 text-white mx-auto'
+                                        xmlns='http://www.w3.org/2000/svg'
+                                        fill='none'
+                                        viewBox='0 0 24 24'
+                                      >
+                                        <circle
+                                          className='opacity-25'
+                                          cx='12'
+                                          cy='12'
+                                          r='10'
+                                          stroke='currentColor'
+                                          strokeWidth='4'
+                                        ></circle>
+                                        <path
+                                          className='opacity-75'
+                                          fill='currentColor'
+                                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                                        ></path>
+                                      </svg>
+                                    ) : (
+                                      'Save'
                                     )}
-                                  </span>
-                              </dd>
-                            </div>
-
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                              <dt className="text-sm font-medium text-sky-900 dark:text-white">Last Name</dt>
-                              <dd className="mt-1 flex text-sm text-sky-800 dark:text-slate-300 sm:mt-0 sm:col-span-2">
+                              </button>
       
-                                { user?.user_data?.last_name ==='None' ? (
-                                    <span className='flex-grow text-xs'>
-                                     Add your last name{' '}
-                                  
-                                  </span>
-                                  ):(
-                                    <span className='flex-grow'>
-                                    {user?.user_data?.last_name}{' '}
-                                  
-                                  </span>
-                                  )}
-                                <span className="ml-4 flex-shrink-0">
-                                   { user?.user_data?.last_name ==='None' ? (
-                                    <button
-                                    onClick={setCloseLNameModal}
-                                    className='bg-sky-600 dark:bg-slate-900 text-white p-1 px-4 rounded text-sm text-center rounded-md hover:bg-gray-600'
-                                  >
-                                    Add
-                                  </button>
-                            ):(
-                              <button
-                              onClick={setCloseLNameModal}
-                              className='bg-sky-600 dark:bg-slate-900 text-white p-1 px-4 rounded text-sm text-center rounded-md hover:bg-gray-600'
-                            >
-                              Edit
-                            </button>
-                            )}
-                                </span>
-                              </dd>
-                            </div>
+                              </div>
+                              <SetFormikValues merchantData={merchantData}/>
+      
+                              </Form>
 
-                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                              <dt className="text-sm font-medium text-sky-900 dark:text-white">Username</dt>
-                              <dd className="mt-1 flex text-sm text-sky-800 dark:text-slate-300 sm:mt-0 sm:col-span-2">
-                              <span className="flex-grow">{user?.user_data?.exploreid}{' '}</span>
+                         ):(
+                          <div className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-md dark:bg-gray-900">
+                                              
+                              <div className="space-y-2 col-span-full lg:col-span-1">
+                                <p className="font-medium text-slate-900">Restaurant details</p>
+                                <p className="text-sm text-slate-500 ">Your restaurant information</p>
+                              </div>
+                              <div className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
+                                <div className="col-span-full sm:col-span-3">
+                                  <label for="firstname" className="text-sm font-medium">Restaurant Name</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.merchant_name}</div>
+                                </div>
+                                <div className="col-span-full sm:col-span-3">
+                                  <label for="lastname" className="text-sm font-medium">Restaurant type</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.merchant_type}</div>
+                                </div>
+                                <div className="col-span-full sm:col-span-3">
+                                  <label for="email" className="text-sm font-medium">Business Email</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.business_email}</div>
+                                </div>
+                                <div className="col-span-full">
+                                  <label for="address" className="text-sm font-medium">Address</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.street_address}</div>
+                                </div>
+                                <div className="col-span-full">
+                                  <label for="bio" className="text-sm font-medium">About</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.about}</div>
+                                </div>
+                                <div className="col-span-full sm:col-span-2">
+                                  <label for="city" className="text-sm font-medium">City</label>
+                                  <div className='text-gray-500 text-sm'>{merchantData?.merchant?.city}</div>
+                                </div>
+                                <div className="col-span-full sm:col-span-2">
+                                  <label for="state" className="text-sm font-medium">Country</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.country}</div>
+                                </div>
+                                <div className="col-span-full sm:col-span-2">
+                                  <label for="zip" className="text-sm">Business Phone</label>
+                                  <div className='text-gray-500 text-sm'>{merchant?.business_phone}</div>
+                                </div>
+                              </div>
+                              <div class="flex justify-end mt-6 col-span-full">
+                              <button onClick={toggleEdittingEnabledMode} className="px-6 py-1 text-sm leading-5 text-white transition-colors duration-200 transform bg-indigo-900 rounded-md hover:bg-pink-700 focus:outline-none focus:bg-gray-600">
+                                Edit Profile
+                              </button>
+      
+                              </div>
+                             
+      
+                              </div>
+                         )}
+                      </div>
                      
-                            <span className="ml-4 flex-shrink-0">
-                            <button
-                              onClick={setCloseUserNameModal}
-                              className='hover:bg-sky-700 text-white p-1 px-4 rounded-md dark:bg-slate-900 bg-sky-600 text-sm text-center'
-                            >
-                              Edit
-                            </button>
-                            </span>
-                              </dd>
-                            </div>
-                              
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:pt-5">
-                              <dt className="text-sm font-medium text-sky-900 dark:text-white">Photo</dt>
-                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow">
-                                  <img
-                                    className="h-8 w-8 rounded-full"
-                                    src={user?.details?.avatar_hash===null ||user?.details?.avatar_hash!== undefined ? user?.details?.avatar_hash :`https://robohash.org/4c6bf950340336dae1895a62062a83f4?set=set4&bgset=&size=400x400`}
-                                    alt=""
-                                  />
+                     )
 
-                                </span>
-                                <span className="ml-4 flex-shrink-0 flex items-start space-x-4">
-                                  <button
-                                    type="button"
-                                    className="bg-white rounded-md font-medium text-purple-600 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                  >
-                                    Update
-                                  </button>
-                                  <span className="text-gray-300" aria-hidden="true">
-                                    |
-                                  </span>
-                                  <button
-                                    type="button"
-                                    className="bg-white rounded-md font-medium text-purple-600 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                  >
-                                    Remove
-                                  </button>
-                                </span>
-                              </dd>
-                            </div>
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:pt-5">
-                              <dt className="text-sm font-medium text-sky-900 dark:text-white">Email</dt>
-                              <dd className="mt-1 flex text-sm text-sky-800 dark:text-slate-300 sm:mt-0 sm:col-span-2">
-                                
-                                  <span className='flex-grow'>
-                                  {user?.user_data?.email}{' '}
-                                 
-                                </span>
-                                <span className="ml-4 flex-shrink-0">
-                                   <button
-                                    onClick={setCloseEmailModal}
-                                    className='hover:bg-sky-700 text-white p-1 px-4 rounded-md bg-sky-600 dark:bg-slate-900 text-sm text-center'
-                                  >
-                                    Edit
-                                  </button>
-                                </span>
-                              </dd>
-                            </div>
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-b sm:border-gray-200">
-                              <dt className="text-sm font-medium text-sky-900 dark:text-white">Phone Number</dt>
-                              <dd className="mt-1 flex text-sm text-sky-800 dark:text-slate-300 sm:mt-0 sm:col-span-2">
-                                
-                                 {user?.user_data?.phone_number==='None' ?(<span className='flex-grow text-xs'>You haven't added a phone number yet.
-                                </span>):(<span className='flex-grow'>{user?.user_data?.phone_number}
-                                </span>)}
-                                <span className="ml-4 flex-shrink-0">
-                                   {user?.user_data?.phone_number==='None' ?(<button onClick ={setClosePhoneModal} className='bg-sky-600 dark:bg-slate-900 text-white p-1 px-4 rounded-md hover:bg-gray-600 text-xs text-center'>
-                                      Add
-                                    </button>):(<button onClick ={setClosePhoneModal} className='hover:bg-sky-700 text-white p-1 px-4 rounded-md bg-sky-600 dark:bg-slate-900  text-xs text-center'>
-                                      Edit phone
-                                    </button>)}
-                                </span>
-                              </dd>
-                            </div>
-                          </dl>
-                        </div>
-                      </div>
+                   }}
+                    
+                   
+             
 
-                      <div className="mt-10 divide-y divide-gray-200">
-                        <div className="space-y-1">
-                          <h3 className="text-lg leading-6 font-medium text-gray-900">Account</h3>
-                          <p className="max-w-2xl text-sm text-gray-500">
-                            Manage how information is displayed on your account.
-                          </p>
-                        </div>
-                        <div className="mt-6">
-                          <dl className="divide-y divide-gray-200">
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                              <dt className="text-sm font-medium text-gray-500">Language</dt>
-                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow">English</span>
-                                <span className="ml-4 flex-shrink-0">
-                                  <button
-                                    type="button"
-                                    className="bg-white rounded-md font-medium text-purple-600 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                  >
-                                    Update
-                                  </button>
-                                </span>
-                              </dd>
-                            </div>
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:pt-5">
-                              <dt className="text-sm font-medium text-gray-500">Date format</dt>
-                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow">DD-MM-YYYY</span>
-                                <span className="ml-4 flex-shrink-0 flex items-start space-x-4">
-                                  <button
-                                    type="button"
-                                    className="bg-white rounded-md font-medium text-purple-600 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                  >
-                                    Update
-                                  </button>
-                                  <span className="text-gray-300" aria-hidden="true">
-                                    |
-                                  </span>
-                                  <button
-                                    type="button"
-                                    className="bg-white rounded-md font-medium text-purple-600 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                  >
-                                    Remove
-                                  </button>
-                                </span>
-                              </dd>
-                            </div>
-                            <Switch.Group as="div" className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:pt-5">
-                              <Switch.Label as="dt" className="text-sm font-medium text-gray-900" passive>
-                                Show Dark Mode
-                              </Switch.Label>
-                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <Switch
-                                  checked={automaticTimezoneEnabled}
-                                  onChange={setAutomaticTimezoneEnabled}
-                                  className={classNames(
-                                    automaticTimezoneEnabled ? 'bg-purple-600' : 'bg-gray-200',
-                                    'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-auto'
-                                  )}
-                                >
-                                  <span
-                                    aria-hidden="true"
-                                    className={classNames(
-                                      automaticTimezoneEnabled ? 'translate-x-5' : 'translate-x-0',
-                                      'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                                    )}
-                                  />
-                                </Switch>
-                              </dd>
-                            </Switch.Group>
-                            <Switch.Group
-                              as="div"
-                              className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-b sm:border-gray-200"
-                            >
-                              <Switch.Label as="dt" className="text-sm font-medium text-gray-500" passive>
-                                Auto-update applicant data
-                              </Switch.Label>
-                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <Switch
-                                  checked={autoUpdateApplicantDataEnabled}
-                                  onChange={setAutoUpdateApplicantDataEnabled}
-                                  className={classNames(
-                                    autoUpdateApplicantDataEnabled ? 'bg-purple-600' : 'bg-gray-200',
-                                    'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-auto'
-                                  )}
-                                >
-                                  <span
-                                    aria-hidden="true"
-                                    className={classNames(
-                                      autoUpdateApplicantDataEnabled ? 'translate-x-5' : 'translate-x-0',
-                                      'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                                    )}
-                                  />
-                                </Switch>
-                              </dd>
-                            </Switch.Group>
-                          </dl>
-                        </div>
-                      </div>
+              </Formik>
+             
+           
+            <fieldset className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-md dark:bg-gray-900">
+              <div className="space-y-2 col-span-full lg:col-span-1">
+                <p className="font-medium text-slate-800">Brand details</p>
+                <p className="text-sm text-gray-500">Delight customers with custom branding when they visit your menu</p>
+              </div>
+              <div className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
+              <div className="col-span-full sm:col-span-3">
+                  <label for="website" className="text-sm">Main color</label>
+                  <input id="website" type="color" value={merchantData?.brandColors[0]?.primaryColor}  className="block w-full px-4 py-1 mt-2 text-gray-700  border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                </div>
+                <div className="col-span-full sm:col-span-3">
+                  <label for="website" className="text-sm">Secondary color</label>
+                  <input id="website" type="color"  value={merchantData?.brandColors[0]?.secondaryColor} className="block w-full px-4 py-1 mt-2 text-gray-700  border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                </div>
+                
+                <div className="col-span-full sm:col-span-3">
+                  <label for="website" className="text-sm">Accent color</label>
+                  <input id="website" type="color" value={merchantData?.brandColors[0]?.accentColor} className="block w-full px-4 py-1 mt-2 text-gray-700  border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                </div>
+                {/*  */}
+                <div className="col-span-full sm:col-span-3">
+                  <label for="logo" className="text-sm font-medium mb-1">Restaurant Logo</label>
+                  <p className="text-sm text-gray-500">Set your restaurant logo, so customers know you personally </p>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <img src={merchantData?.brandColors[0]?.merchant_logo} alt="" className="w-10 h-10 rounded-full dark:bg-gray-500 dark:bg-gray-700" />
+                    <label for="file-upload" class="px-4 py-2 border rounded-md dark:border-gray-100">
+                      <span class="">Change</span>
+                      <input id="file-upload" name="file-upload" type="file" class="sr-only"/>
+                    </label>
+                    
+                  </div>
+                </div>
+
+                <div className='col-span-full sm:col-span-3'>
+                <label class="block text-sm font-medium mb-1 ">
+                Banner Image
+              </label>
+              <p className="text-sm text-gray-500">This picture will show up as a banner across the top of your menu. </p>
+              <img src={merchantData?.brandColors[0]?.brand_image} alt="" className="w-full h-20 mt-2 rounded-md  dark:bg-gray-500 dark:bg-gray-700" />
+              <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+              
+                <div class="space-y-1 text-center">
+                  <svg className="mx-auto h-12 w-12 text-indigo-200" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <div class="flex text-sm text-gray-600">
+                    <label for="file-upload" class="relative cursor-pointer bg-slate-100 rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                      <span class="">Upload a file</span>
+                      <input id="file-upload" name="file-upload" type="file" class="sr-only"/>
+                    </label>
+                    <p class="pl-1">or drag and drop</p>
+                  </div>
+                  <p class="text-xs ">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+
+              <div class="flex justify-end mt-6 col-span-full">
+              <button class="px-6 py-1 leading-5 text-white transition-colors duration-200 transform bg-indigo-900 rounded-md hover:bg-pink-700 focus:outline-none focus:bg-gray-600">Save</button>
+          </div>
+
+              </div>
+            </fieldset>
+            </div>
+          
+        </section>
+
+        <KitchenHours merchantData ={merchantData?.KitchenHours}/>
+        
 
 
-
-      <Modal show={showPhoneUpdate} onClose={setClosePhoneModal} center escape={escape} opacity='bg-opacity-50'>
-        <UpdatePhone onClose={setClosePhoneModal} user={user} apiSubmit ={updateProfileData} modal='phone' />
-      </Modal>
+{/* 
+      
 
       <Modal show={showUserNameUpdate} onClose={setCloseUserNameModal} center escape={escape} opacity='bg-opacity-50'>
         <UpdatePhone onClose={setCloseUserNameModal} user={user} apiSubmit ={updateProfileData} modal='username'/>
@@ -431,7 +403,7 @@ console.log(user?.details?.avatar_hash)
 
       <Modal show={showlNameUpdate} onClose={setCloseLNameModal} center escape={escape} opacity='bg-opacity-50'>
         <UpdateName onClose={setCloseLNameModal} user={user} apiSubmit ={updateProfile} modal='lastname' />
-      </Modal>
+      </Modal> */}
     </div>
   )
 }

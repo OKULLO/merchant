@@ -8,31 +8,34 @@ import { HOME_PAGE } from '../../constants/history.constants'
 import apiErrorHandler from '../../utils/apiErrorHandler'
 import { loginSuccess } from '../../store/user'
 import { useTitle } from '../../hooks/hook';
+import { toast } from 'react-hot-toast'
 
 export default function Login (){
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const brandLogo =`${process.env.PUBLIC_URL}/explre.png`
-  const pageTitle ='Sign in to your Dashboard'
+
+  const pageTitle ='Sign in to your Merchant Portal'
   useTitle (pageTitle)
 
   async function handleLoginSubmit(values, { setErrors }) {
     try {
       const { data } = await login(values)
-      // console.log(data)
+      console.log(data)
 
-      if (data.success) {
+      if (data?.success) {
+        toast.success(data.message)
         dispatch(loginSuccess(data))
         navigate(HOME_PAGE)
       }
     } catch (error) {
-      
-      if (error.response.status === 400) {
-        setErrors({ email: error.response.data.message })
+      console.log(error)
+      if (error?.response?.status === 400) {
+        setErrors({ username: error?.response?.data?.message })
+        toast.error(error?.response?.data?.message)
         // console.log('error: ', error.response.data.message)
       } else {
-        setErrors(apiErrorHandler(error))
+        toast.error(error?.response?.data?.message)
         
       }
     }
@@ -43,7 +46,7 @@ export default function Login (){
   return (
 
 <div className="flex min-h-full items-center justify-center py-12 mt-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-800">
-  <div className="w-84 max-w-md space-y-8">
+  <div className=" w-full md:w-84  max-w-md space-y-8">
     <div>
    
       <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-slate-900">{pageTitle}</h2>
@@ -51,7 +54,7 @@ export default function Login (){
     </div>
 
     <Formik
-            initialValues={{ email: '', password: '' }}
+            initialValues={{ username: '', password: '' }}
             validationSchema={LoginSchema}
             onSubmit={handleLoginSubmit}
           >
@@ -60,13 +63,13 @@ export default function Login (){
                 <Field type="hidden" name="remember" value="true"/>
                 <div className="-space-y-px rounded-md shadow-sm">
                   <div className='mb-2'>
-                    <label for="email-address" className='text-indigo-700 '>Email address</label>
-                    <Field id="email-address" name="email" type="email" autocomplete="email"  className="relative block w-full appearance-none  rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-slate-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-slate-500 sm:text-sm" placeholder="Email address"/>
-                    <ErrorMessage name="email" component='span' className='text-xs text-red-500'/>
+                    <label for="email-address" className='text-slate-700 '>Username</label>
+                    <Field id="email-address" name="username" type="text" autocomplete="email"  className="relative block w-full appearance-none  rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-slate-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-slate-500 sm:text-sm" placeholder="Username"/>
+                    <ErrorMessage name="username" component='span' className='text-xs text-red-500'/>
                    
                   </div>
                   <div className="mb-2 mt-2">
-                    <label for="password" className="text-indigo-700">Password</label>
+                    <label for="password" className="text-slate-700">Password</label>
                     <Field id="password" name="password" type="password" autocomplete="current-password"  className="relative block w-full appearance-none  rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-slate-500 sm:text-sm" placeholder="Password"/>
                   </div>
                   <ErrorMessage name="password" component='span' className='text-xs text-red-500' />
