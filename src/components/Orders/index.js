@@ -154,53 +154,136 @@ export default function Dashboard(){
               )}
 
               {currentTab.id===2 && (
-               <div className='relative  max-w-4xl lg:max-w-4xl mx-auto md:px-8 xl:px-0 mt-4'>
-                 <div className="flex flex-col gap-4  sm:flex-row sm:items-center px-10 mt-6 justify-end my-4">
-                  <h2>Dine in orders</h2>
-                 </div>
-                  <div className="overflow-x-auto">
-                    <table className="table table-zebra w-full">
-                      {/* <!-- head --> */}
-                      <thead>
+                
+               <div className='relative  h-screen max-w-4xl lg:max-w-4xl mx-auto md:px-4 xl:px-0 mt-4'>
+                  <div class="p-5  rounded-md">
+                    <h1 class="text-xl mb-2">Your orders</h1>
+                
+                    <div class="overflow-auto rounded-lg shadow hidden md:block">
+                      <table class="w-full">
+                        <thead class="bg-gray-50 border-b-2 border-gray-200">
                         <tr>
-                          <th>Order ID</th>
-                          <th>ORDER NO</th>
-                          <th>TABLE NO</th>
-                          <th>ORDER STATUS</th>
-                          <th>ORDER MODE</th>
-                          <th>ORDER Total</th>
-                          <th>Payment STATUS</th>
+                          <th class="w-20 p-3 text-sm font-semibold tracking-wide text-left">Order No</th>
+                          <th class="p-3 text-sm font-semibold tracking-wide text-left">Name</th>
+                          <th class="w-24 p-3 text-sm font-semibold tracking-wide text-left">Table NO</th>
+                          <th class="w-24 p-3 text-sm font-semibold tracking-wide text-left">Date</th>
+                          <th class="w-24 p-3 text-sm font-semibold tracking-wide text-left">Time</th>
+                          <th class="w-24 p-3 text-sm font-semibold tracking-wide text-left">Status</th>
+                          
+                          <th class="w-32 p-3 text-sm font-semibold tracking-wide text-left">Total</th>
+                          <th class="w-32 p-3 text-sm font-semibold tracking-wide text-left">Order Mode</th>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {/* <!-- row 1 --> */}
-                        <tr>
-                          <th>1</th>
-                          <td>2345</td>
-                          <td>T4</td>
-                          <td>completed</td>
-                          <td>Dine in</td>
-                          <td>Ugx 20,000</td>
-                          <td>paid</td>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                        <tr class="bg-white my-2">
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                            <a href="#" class="font-bold text-blue-500 hover:underline">10001</a>
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                            Kring New Fit 
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                          <span
+                            class="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">Delivered</span>
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">16/10/2021</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
                         </tr>
-                        {/* <!-- row 2 --> */}
-                        <tr>
-                          <th>2</th>
-                          <td>Hart Hagerty</td>
-                          <td>Desktop Support Technician</td>
-                          <td>Purple</td>
+                        <tr class="bg-gray-50">
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                            <a href="#" class="font-bold text-blue-500 hover:underline">10002</a>
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">Kring New Fit office chair</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                          <span
+                            class="p-1.5 text-xs font-medium uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">Shipped</span>
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">16/10/2021</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
                         </tr>
-                        {/* <!-- row 3 --> */}
-                        <tr>
-                          <th>3</th>
-                          <td>Brice Swyre</td>
-                          <td>Tax Accountant</td>
-                          <td>Red</td>
+                        <tr class="bg-white">
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                            <a href="#" class="font-bold text-blue-500 hover:underline">10002</a>
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">Kring New Fit office chair</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+                          <span
+                            class="p-1.5 text-xs font-medium uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">Cancelled</span>
+                          </td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">16/10/2021</td>
+                          <td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
                         </tr>
-                        
-                      </tbody>
-                    </table>
-                   </div>
+                        </tbody>
+                      </table>
+                    </div>
+ 
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+      <div class="bg-white space-y-3 p-4 rounded-lg shadow">
+        <div class="flex items-center space-x-2 text-sm">
+          <div>
+            <a href="#" class="text-blue-500 font-bold hover:underline">#1000</a>
+          </div>
+          <div class="text-gray-500">10/10/2021</div>
+          <div>
+            <span
+              class="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">Delivered</span>
+          </div>
+        </div>
+        <div class="text-sm text-gray-700">
+          Kring New Fit office chair, mesh + PU, black
+        </div>
+        <div class="text-sm font-medium text-black">
+          $200.00
+        </div>
+      </div>
+      <div class="bg-white space-y-3 p-4 rounded-lg shadow">
+        <div class="flex items-center space-x-2 text-sm">
+          <div>
+            <a href="#" class="text-blue-500 font-bold hover:underline">#1001</a>
+          </div>
+          <div class="text-gray-500">10/10/2021</div>
+          <div>
+            <span
+              class="p-1.5 text-xs font-medium uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">Shipped</span>
+          </div>
+        </div>
+        <div class="text-sm text-gray-700">
+          Kring New Fit office chair, mesh + PU, black
+        </div>
+        <div class="text-sm font-medium text-black">
+          $200.00
+        </div>
+      </div>
+      <div class="bg-white space-y-3 p-4 rounded-lg shadow">
+        <div class="flex items-center space-x-2 text-sm">
+          <div>
+            <a href="#" class="text-blue-500 font-bold hover:underline">#1002</a>
+          </div>
+          <div class="text-gray-500">10/10/2021</div>
+          <div>
+            <span
+              class="p-1.5 text-xs font-medium uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">Canceled</span>
+          </div>
+        </div>
+        <div class="text-sm text-gray-700">
+          Kring New Fit office chair, mesh + PU, black
+        </div>
+        <div class="text-sm font-medium text-black">
+          $200.00
+        </div>
+      </div>
+    </div>
+  </div>
+               
                 {/* <div className="text-center py-10 pb-10">
 
                 <h3 className="mt-2 text-sm font-medium text-sky-900 dark:text-slate-400">You don't have any Refunds on your account yet</h3>

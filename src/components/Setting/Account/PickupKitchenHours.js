@@ -2,18 +2,19 @@ import { useEffect, useState } from "react"
 import UpdateKitchenHours from './Kitchenhours/UpdateKitchenHours'
 import AddKitchenHours from './Kitchenhours/AddKitchenhours'
 import Modal from '../../shared/Modal'
-import { updateKitchenHours } from '../../../services/merchant'
+
+
 import { formatTime } from '../../../utils/dateUtils'
-import toast from 'react-hot-toast';
+
 import { PlusIcon} from '@heroicons/react/outline'
 
 
 
-export default function DineInKItchenHours({merchantData, merchantId}){
- 
+export default function PickupKItchenHours({merchantData, merchantId}){
+
   const [showUpdate, setShowUpdateModal] = useState(false)
-  const [ toggleUpdate, setToggleUpdateModal] = useState(false)
   const [ kitchenhours, setKitchenhours] = useState([])
+  const [ toggleUpdate, setToggleUpdateModal] = useState(false)
   const [kitchenHr, setkitchenHr ] = useState({})
 
   function toggleUpdateKitchenHours(kitchenhrs){
@@ -22,59 +23,26 @@ export default function DineInKItchenHours({merchantData, merchantId}){
     
   }
 
+  
+
+
   function toggleKitchenHours(){
     setShowUpdateModal(!showUpdate)
    
   }
 
-  // sort only dine in kitchen hours
+  // sort only pickup kitchen hours
 
   useEffect(()=>{
  
   let filteredData = merchantData?.filter((el)=>{
-    return el.kitchen_hour_type ==='dine_in'
+    return el.kitchen_hour_type ==='pickup'
   })
 
   setKitchenhours(filteredData);
 
   },[merchantData])
 
-  async function updateKitchenHoursApi(payload) {
-   
-
-    try {
-
-      const { data } = await updateKitchenHours(merchantId,payload)
-
-      if (data.success) {
-        console.log(data)
-
-        toast.success(data?.message)
-
-        const upd_obj = kitchenhours.map(obj => {
-        
-          if (obj.kitchenId === data?.kitchenhours?.kitchenId) {
-            for( let el in obj){
-               obj[el] = data?.kitchenhours[el]
-            } 
-          }
-          return obj;
-         })
-         
-        setKitchenhours(upd_obj);
-        setToggleUpdateModal()
-      }
-    } catch (error) {
-      
-      if (error.response.status === 401) {
-        toast.error('UnAuthorized')
-      } else {
-        // setUpdated(!updated)
-        toast.error(error.response.data.message)
-        
-      }
-    }
-  }
 
 
   return (
@@ -114,7 +82,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
                               
                                 <button
                                 type='button'
-                                onClick={()=>toggleUpdateKitchenHours(hrs)}
+                                nClick={()=>toggleUpdateKitchenHours(hrs)}
                                 
                                 className='bg-indigo-800 dark:bg-slate-900 text-white p-0.25 px-4 text-xs text-center rounded-full hover:bg-gray-600'
                               >
@@ -130,7 +98,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
                        ):(
                         <div className="text-center py-6 pb-10">
             
-                        <p className="mt-1 text-sm text-gray-500 dark:text-slate-50">Dine In kitchen hours not set</p>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-slate-50">Pickup kitchen hours not set</p>
                         <div className="mt-2">
                         <button type="button" onClick={toggleKitchenHours} className="inline-flex items-center px-4 py-0.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <PlusIcon className='w-3 h-3 mr-1'/>
@@ -155,7 +123,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
         <AddKitchenHours onClose={toggleKitchenHours} isAdding={false} merchantId ={merchantId}  />
       </Modal>
       <Modal show={toggleUpdate} onClose={setToggleUpdateModal} center  opacity='bg-opacity-50'>
-        <UpdateKitchenHours onClose={toggleUpdateKitchenHours} isAdding={false} merchantId ={merchantId} kitchenHr={kitchenHr} apiSubmit={updateKitchenHoursApi} />
+        <UpdateKitchenHours onClose={toggleUpdateKitchenHours} isAdding={false} merchantId ={merchantId} kitchenHr={kitchenHr} />
       </Modal>
     </>
   )

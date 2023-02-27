@@ -40,6 +40,7 @@ export default function Card({ merchantData, merchantId }) {
 
 
 
+
   const [showPasswordUpdate, togglePasswordUpdateModal] = useState(false)
   const [showlNameUpdate, toggleLNameUpdateModal] = useState(false)
   const [showfNameUpdate, togglefNameUpdateModal] = useState(false)
@@ -383,7 +384,7 @@ export default function Card({ merchantData, merchantId }) {
           
         </section>
 
-        <KitchenHours merchantData ={merchantData?.KitchenHours}/>
+        <KitchenHours merchantData ={merchantData?.kitchenHours} merchantId={merchantId}/>
         
 
 

@@ -1,40 +1,17 @@
 import React, { useState, useEffect } from 'react'
 
-import { Formik, Form, Field, useFormikContext } from 'formik'
+import { Formik, Form, Field } from 'formik'
 
 // import UserNameUpdateSchema from '../../../validation/userNameUpdate.schema'
 
 
-function SetFormValues({kitchenHr}){
-  console.log(kitchenHr)
+export default function Card({ onClose, isAdding,merchantId,apiSubmit }) {
+ 
 
 
-  const { setFieldValue } = useFormikContext();
-  // console.log(kitchenHr)
+  async function updateKitchenHours(values,{ setErrors }) {
 
-  useEffect(() => {
-                                           
-    const fields = ['from_time','to_time','day_of_week','kitchen_hour_type'];
-    if (kitchenHr!==undefined){
-
-      fields.forEach(field => setFieldValue(field, kitchenHr[field], false));
-    }
-
-
-}, []);
-
-}
-
-export default function Card({ onClose, isAdding,merchantId, kitchenHr, apiSubmit }) {
-
-
-
-
-  async function updateKitchenHoursApi(values,{ setErrors }) {
-
-    let payload = {from_time:values.from_time,to_time:values.to_time,day_of_week:values.day_of_week,kitchen_hour_type:values.kitchen_hour_type,kitchenhoursId:kitchenHr.kitchenId}
-
-    await apiSubmit(payload)
+     await apiSubmit(values)
   }
  
 
@@ -42,7 +19,7 @@ export default function Card({ onClose, isAdding,merchantId, kitchenHr, apiSubmi
 
   return (
     <Formik  initialValues={{ from_time:'', to_time:'',kitchen_hour_type:'',day_of_week:''}}
-    onSubmit={updateKitchenHoursApi}
+    onSubmit={updateKitchenHours}
 
     className=" w-full lg:w-1/2 mt-5 md:col-span-2 md:mt-0">
       
@@ -69,6 +46,12 @@ export default function Card({ onClose, isAdding,merchantId, kitchenHr, apiSubmi
                     <Field type="time" placeholder="Time of day" name='to_time' className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-1 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" />
                   </div>
    
+                  {/* <div className="col-span-6 sm:col-span-4">
+                    <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
+                      Day of week
+                    </label>
+                    <input type="text" placeholder="Day of week" className="input py-1 input-bordered input-primary w-full" />
+                  </div> */}
    
                   <div className="col-span-6 sm:col-span-3">
                     <label htmlFor="day_of_week" className="block text-sm font-medium text-gray-700">
@@ -151,7 +134,6 @@ export default function Card({ onClose, isAdding,merchantId, kitchenHr, apiSubmi
                 </button>
               </div>
             </div>
-            <SetFormValues kitchenHr={kitchenHr}/>
           </Form>
    
         )

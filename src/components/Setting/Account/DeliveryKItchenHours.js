@@ -9,11 +9,11 @@ import { PlusIcon} from '@heroicons/react/outline'
 
 
 
-export default function DineInKItchenHours({merchantData, merchantId}){
- 
+export default function DeliveryKItchenHours({merchantData, merchantId}){
+
   const [showUpdate, setShowUpdateModal] = useState(false)
-  const [ toggleUpdate, setToggleUpdateModal] = useState(false)
   const [ kitchenhours, setKitchenhours] = useState([])
+  const [ toggleUpdate, setToggleUpdateModal] = useState(false)
   const [kitchenHr, setkitchenHr ] = useState({})
 
   function toggleUpdateKitchenHours(kitchenhrs){
@@ -21,6 +21,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
     setToggleUpdateModal(!toggleUpdate)
     
   }
+
 
   function toggleKitchenHours(){
     setShowUpdateModal(!showUpdate)
@@ -32,7 +33,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
   useEffect(()=>{
  
   let filteredData = merchantData?.filter((el)=>{
-    return el.kitchen_hour_type ==='dine_in'
+    return el.kitchen_hour_type ==='delivery'
   })
 
   setKitchenhours(filteredData);
@@ -130,7 +131,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
                        ):(
                         <div className="text-center py-6 pb-10">
             
-                        <p className="mt-1 text-sm text-gray-500 dark:text-slate-50">Dine In kitchen hours not set</p>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-slate-50">Delivery kitchen hours not set</p>
                         <div className="mt-2">
                         <button type="button" onClick={toggleKitchenHours} className="inline-flex items-center px-4 py-0.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <PlusIcon className='w-3 h-3 mr-1'/>
@@ -155,7 +156,7 @@ export default function DineInKItchenHours({merchantData, merchantId}){
         <AddKitchenHours onClose={toggleKitchenHours} isAdding={false} merchantId ={merchantId}  />
       </Modal>
       <Modal show={toggleUpdate} onClose={setToggleUpdateModal} center  opacity='bg-opacity-50'>
-        <UpdateKitchenHours onClose={toggleUpdateKitchenHours} isAdding={false} merchantId ={merchantId} kitchenHr={kitchenHr} apiSubmit={updateKitchenHoursApi} />
+        <UpdateKitchenHours onClose={toggleUpdateKitchenHours} isAdding={false} merchantId ={merchantId} kitchenHr={kitchenHr}  apiSubmit={updateKitchenHoursApi}/>
       </Modal>
     </>
   )
